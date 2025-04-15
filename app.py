@@ -15,12 +15,15 @@ def load_stopwords():
 # Load model and vectorizer
 @st.cache_resource
 def load_model_and_vectorizer():
-    with open('model.pkl', 'rb') as model_file:
-        model = pickle.load(model_file)
-    with open('vectorizer.pkl', 'rb') as vectorizer_file:
-        vectorizer = pickle.load(vectorizer_file)
-    return model, vectorizer
-
+    try:
+        with open('/mount/src/tweet_analyzer/model.pkl', 'rb') as model_file:
+            model = pickle.load(model_file)
+        with open('/mount/src/tweet_analyzer/vectorizer.pkl', 'rb') as vectorizer_file:
+            vectorizer = pickle.load(vectorizer_file)
+        return model, vectorizer
+    except Exception as e:
+        st.error(f"Failed to load model files: {str(e)}")
+        return None, None  # Graceful fallback
 # Initialize Nitter scraper with better instance management
 @st.cache_resource
 def initialize_scraper():
@@ -78,6 +81,10 @@ def create_card(tweet_text, sentiment):
     """
 
 def main():
+    import os
+    st.write("Files in directory:", os.listdir('/mount/src/tweet_analyzer'))
+    
+    # Rest of your code...
     st.title("Twitter Sentiment Analysis 🐦")
     st.markdown("Analyze text or recent tweets from public accounts")
 
